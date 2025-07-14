@@ -1,0 +1,73 @@
+# 🧠 GPT-2 Medical Fine-Tuned Model
+
+This repository contains a fine-tuned version of OpenAI's GPT-2 model, trained on medical question-answer pairs using the [MedQuAD](https://www.nlm.nih.gov/dimrc/medquad.html) dataset. The goal is to create a chatbot that can answer common medical queries in a human-like and informative way.
+
+---
+
+## 📦 Files in this Repo
+
+- `Fine_tune.ipynb` - Colab notebook used for training the GPT-2 model.
+- `gpt2-medical-finetuned2/` - Folder containing the trained model, tokenizer, config files, etc.
+- `README.md` - You’re reading it 😊
+
+---
+
+## 📊 Dataset
+
+- **Source**: MedQuAD (Medical Question Answer Dataset by NIH)
+- **Total Pairs Used**: ~47,000
+- **Data Columns**:
+  - `prompt`: Medical question
+  - `response`: Human-written medical answer
+
+---
+
+## 🧪 Model Training
+
+- **Base Model**: `gpt2`
+- **Framework**: Hugging Face Transformers (v4.53.1)
+- **Training Platform**: Google Colab / Kaggle (P100 / T4 GPU)
+- **Epochs**: 1 (to fit Colab/Kaggle limitations)
+- **Max Token Length**: 512
+- **Precision**: fp16 (mixed precision)
+
+---
+
+## ⚠️ Challenges Faced
+
+1. **Transformers Version Conflict**: 
+   - Some functions (`evaluation_strategy`, `Trainer`) didn’t work with older versions.
+   - Solved by upgrading Transformers to `4.53.1`.
+
+2. **Evaluation Errors**:
+   - `Trainer` was throwing errors due to `EncoderDecoderCache` missing.
+   - Fixed by correcting version and changing keys like `eval_strategy`.
+
+3. **NaN Responses in Dataset**:
+   - Cleaned all rows with `None`, `NaN`, or empty `response`.
+
+4. **Colab GPU Limits**:
+   - Faced GPU disconnection mid-training.
+   - Used Kaggle as an alternative.
+
+5. **Model Download Issues**:
+   - Kaggle browser download sometimes failed.
+   - Zipped model and used Google Drive API / Colab uploads as a workaround.
+
+---
+
+## 🚀 Inference Example
+
+```python
+from transformers import pipeline
+
+medical_bot = pipeline(
+    "text-generation",
+    model="gpt2-medical-finetuned2",
+    tokenizer="gpt2-medical-finetuned2",
+    pad_token_id=50256
+)
+
+prompt = "What is the best treatment for diabetes?"
+response = medical_bot(prompt, max_new_tokens=100)[0]['generated_text']
+print(response)
