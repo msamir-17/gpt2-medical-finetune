@@ -1,58 +1,49 @@
 # 🧠 GPT-2 Medical Fine-Tuned Model
 
-This repository contains a fine-tuned version of OpenAI's GPT-2 model, trained on medical question-answer pairs using the [MedQuAD](https://www.nlm.nih.gov/dimrc/medquad.html) dataset. The goal is to create a chatbot that can answer common medical queries in a human-like and informative way.
+This repository contains a fine-tuned version of OpenAI's GPT-2 model, trained on medical question-answer pairs from the [MedQuAD](https://www.nlm.nih.gov/dimrc/medquad.html) dataset.  
+The goal is to build an AI assistant capable of answering common medical queries in a human-like, informative manner.
+
+🔗 Try the model here: [Hugging Face - samirk10/fine-tune](https://huggingface.co/samirk10/fine-tune)
 
 ---
 
-## 📦 Files in this Repo
+## 📦 Repository Contents
 
-- `Fine_tune.ipynb` - Colab notebook used for training the GPT-2 model.
-- `gpt2-medical-finetuned2/` - Folder containing the trained model, tokenizer, config files, etc.
-- `README.md` - You’re reading it 😊
+- `Fine_tune.ipynb`: Google Colab notebook for fine-tuning GPT-2 on medical Q&A.
+- `gpt2-medical-finetuned2/`: Folder containing the trained model, tokenizer, and config files.
+- `README.md`: Project overview and usage instructions.
 
 ---
 
 ## 📊 Dataset
 
-- **Source**: MedQuAD (Medical Question Answer Dataset by NIH)
-- **Total Pairs Used**: ~47,000
-- **Data Columns**:
+- **Source**: MedQuAD (NIH)
+- **Size**: ~47,000 Q&A pairs
+- **Format**:
   - `prompt`: Medical question
-  - `response`: Human-written medical answer
+  - `response`: Medical answer
 
 ---
 
-## 🧪 Model Training
+## 🏋️ Model Training Details
 
 - **Base Model**: `gpt2`
-- **Framework**: Hugging Face Transformers (v4.53.1)
-- **Training Platform**: Google Colab / Kaggle (P100 / T4 GPU)
-- **Epochs**: 1 (to fit Colab/Kaggle limitations)
+- **Library**: 🤗 Hugging Face Transformers (`v4.53.1`)
+- **Platform**: Google Colab / Kaggle (T4 / P100 GPU)
+- **Epochs**: 1
 - **Max Token Length**: 512
-- **Precision**: fp16 (mixed precision)
+- **Mixed Precision**: `fp16`
 
 ---
 
-## ⚠️ Challenges Faced
+## 🛠️ Key Issues & Solutions
 
-1. **Transformers Version Conflict**: 
-   - Some functions (`evaluation_strategy`, `Trainer`) didn’t work with older versions.
-   - Solved by upgrading Transformers to `4.53.1`.
-
-2. **Evaluation Errors**:
-   - `Trainer` was throwing errors due to `EncoderDecoderCache` missing.
-   - Fixed by correcting version and changing keys like `eval_strategy`.
-
-3. **NaN Responses in Dataset**:
-   - Cleaned all rows with `None`, `NaN`, or empty `response`.
-
-4. **Colab GPU Limits**:
-   - Faced GPU disconnection mid-training.
-   - Used Kaggle as an alternative.
-
-5. **Model Download Issues**:
-   - Kaggle browser download sometimes failed.
-   - Zipped model and used Google Drive API / Colab uploads as a workaround.
+| Issue | Fix |
+|------|-----|
+| ❌ Older Transformers version broke `Trainer` / `evaluation_strategy` | ✅ Upgraded to `v4.53.1` |
+| ❌ `NaN` or `None` responses in dataset | ✅ Cleaned before training |
+| ❌ Colab GPU disconnection | ✅ Switched to Kaggle |
+| ❌ Model download problems | ✅ Used zip + Google Drive/Colab |
 
 ---
 
@@ -63,8 +54,8 @@ from transformers import pipeline
 
 medical_bot = pipeline(
     "text-generation",
-    model="gpt2-medical-finetuned2",
-    tokenizer="gpt2-medical-finetuned2",
+    model="samirk10/fine-tune",  # Hugging Face Model
+    tokenizer="samirk10/fine-tune",
     pad_token_id=50256
 )
 
